@@ -131,9 +131,9 @@ details.mini summary{cursor:pointer;font-weight:500}
         </div>
       </div>
       <div class="field only-transfer">
-        <label for="regreso">Hora de regreso <span style="font-weight:400;color:var(--ink2)">(opcional)</span></label>
+        <label for="regreso">Hora a la que los buscamos <span style="font-weight:400;color:var(--ink2)">(opcional)</span></label>
         <input type="time" id="regreso">
-        <span class="hint">Si volvés con nosotros, indicá a qué hora querés regresar. El precio incluye la espera.</span>
+        <span class="hint">Si querés que los volvamos a buscar, indicá a qué hora. Los dejamos en el destino y volvemos a esa hora.</span>
         <span class="err" data-err="regreso"></span>
       </div>
       <div class="field">
@@ -323,7 +323,7 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   }
   function respuesta(r, v) {
     if (!r || typeof r !== 'object') { falloGeneral(v); return; }
-    if (r.ok === true) { mostrar(mode === 'transfer' ? htmlTraslado(r, v) : htmlPaquete(r, v)); return; }
+    if (r.ok === true) { mostrar(mode === 'transfer' ? (r.servicio === 'solo_paquetes' ? htmlSoloPaquetes(r, v) : htmlTraslado(r, v)) : htmlPaquete(r, v)); return; }
     var m = r.motivo;
     if (m === 'datos_invalidos') {
       var mapa = { nombre: 'nombre', mail: 'mail', whatsapp: 'whatsapp', fecha: 'fecha', salida: 'salida', regreso: 'regreso', pax: 'pax', lugar: mode === 'transfer' ? 'origen' : 'punto' };
@@ -351,16 +351,16 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   function pie(v) { return '<p class="mail">Te enviamos una copia a ' + esc(v.mail) + '. Si no la ves, revisá la carpeta de spam.</p><button class="btn alt" type="button" id="otra" style="margin-top:14px">Hacer otra cotización</button>'; }
 
   function htmlTraslado(r, v) {
-    var rs = r.resumen || {}, full = r.servicio === 'dia_completo';
-    var serv = full ? 'Día completo (8 h)' : (r.servicio === 'ida_y_vuelta_con_espera' ? 'Ida y vuelta, con espera de ' + String(r.esperaHoras).replace('.', ',') + ' h' : 'Solo ida');
+    var rs = r.resumen || {}, full = r.servicio === 'dia_completo', dyb = r.servicio === 'ida_y_vuelta_dejar_y_buscar';
+    var serv = full ? 'Día completo (8 h)' : (dyb ? 'Te dejamos y volvemos a buscarlos a las ' + rs.regreso + ' h' : 'Solo ida');
     var wa = waLink(['Hola nativo! Soy ' + v.nombre + '. Quiero reservar ' + (full ? 'un día completo' : 'este viaje') + '.', 'Presupuesto ' + r.codigo + ' (válido hasta el ' + ddmm(r.vigenteHasta) + ').',
-      'Salida: ' + rs.origen, 'Destino: ' + rs.destino, 'Fecha: ' + fechaLarga(rs.fecha) + ', ' + rs.salida + ' h' + (rs.regreso ? ', regreso ' + rs.regreso + ' h' : ''), 'Pasajeros: ' + rs.pax, 'Servicio: ' + serv,
+      'Salida: ' + rs.origen, 'Destino: ' + rs.destino, 'Fecha: ' + fechaLarga(rs.fecha) + ', ' + rs.salida + ' h' + (rs.regreso ? ', los buscamos a las ' + rs.regreso + ' h' : ''), 'Pasajeros: ' + rs.pax, 'Servicio: ' + serv,
       'Precio: ' + fmt(r.precio) + ' por el vehículo completo.']);
-    var extras = full ? ['Para este recorrido conviene el día completo: 8 horas netas desde que retiramos al grupo. Hora adicional: ' + fmt(r.horaExtra) + ', a abonar al finalizar el servicio.'] : [];
+    var extras = full ? ['Para este recorrido conviene el día completo: 8 horas netas desde que retiramos al grupo. Hora adicional: ' + fmt(r.horaExtra) + ', a abonar al finalizar el servicio.'] : (dyb ? ['Los dejamos en el destino y volvemos a buscarlos a la hora indicada: por eso no se cobra espera.'] : []);
     var op = '';
     if (r.paquetes) {
       var c = [];
-      if (full) c.push('<div class="opt"><h3>Solo el traslado con espera</h3><p class="price">' + fmt(r.precioTraslado) + '</p><p class="alsmall">Es el recorrido que pediste, sin horas disponibles para otros destinos.</p></div>');
+      if (full) c.push('<div class="opt"><h3>Solo el traslado</h3><p class="price">' + fmt(r.precioTraslado) + '</p><p class="alsmall">Es el recorrido que pediste, sin horas disponibles para otros destinos.</p></div>');
       if (r.paquetes.medioDia) c.push('<div class="opt"><h3>Medio día · 4 horas</h3><p class="price">' + fmt(r.paquetes.medioDia) + '</p><p class="alsmall">Hora adicional: ' + fmt(r.paquetes.horaExtra) + '.</p></div>');
       if (!full) c.push('<div class="opt"><h3>Día completo · 8 horas</h3><p class="price">' + fmt(r.paquetes.diaCompleto) + '</p><p class="alsmall">Hora adicional: ' + fmt(r.paquetes.horaExtra) + '.</p></div>');
       op = '<h3 style="font-size:16px;margin:22px 0 10px">Otras opciones para este día</h3>' + c.join('');
@@ -369,6 +369,20 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
       filas([['Salida', rs.origen], ['Destino', rs.destino], ['Fecha y hora', fechaLarga(rs.fecha) + ', ' + rs.salida + ' h'], ['Servicio', serv], ['Pasajeros', rs.pax]]) +
       '<div class="pricebox"><p class="plabel">Precio total del vehículo' + (full ? ' · día completo' : '') + '</p><p class="price">' + fmt(r.precio) + '</p>' + ppTexto(r.pax, r.porPasajero) + '</div>' +
       notas(extras) + botonWA(wa) + op + pie(v) + '</article>';
+  }
+  function htmlSoloPaquetes(r, v) {
+    var rs = r.resumen || {}, pk = r.paquetes || {};
+    function opt(t, h, precio, pp) {
+      var wa = waLink(['Hola nativo! Soy ' + v.nombre + '. Quiero reservar ' + t.toLowerCase() + '.', 'Presupuesto ' + r.codigo + ' (válido hasta el ' + ddmm(r.vigenteHasta) + ').', 'Salida: ' + rs.origen, 'Destino: ' + rs.destino,
+        'Fecha: ' + fechaLarga(rs.fecha) + ', ' + rs.salida + ' h, regreso ' + rs.regreso + ' h', 'Pasajeros: ' + rs.pax, 'Precio: ' + fmt(precio) + ' por el vehículo completo.']);
+      return '<div class="opt"><h3>' + t + ' · ' + h + ' horas</h3><p class="price">' + fmt(precio) + '</p><p class="pp">Referencia por pasajero (' + esc(rs.pax) + ' ' + (rs.pax === 1 ? 'persona' : 'personas') + '): <strong>' + fmt(pp) + '</strong></p>' +
+        '<p class="pp2">Vehículo a disposición ' + h + ' horas netas desde que retiramos al grupo. Hora adicional: ' + fmt(pk.horaExtra) + '.</p><div style="margin-top:12px">' + botonWA(wa) + '</div></div>';
+    }
+    return '<article class="card">' + cabecera(r) +
+      filas([['Salida', rs.origen], ['Destino', rs.destino], ['Fecha y hora', fechaLarga(rs.fecha) + ', ' + rs.salida + ' h'], ['Regreso', rs.regreso + ' h'], ['Pasajeros', rs.pax]]) +
+      '<div class="notice" style="margin:12px 0 14px">Con ese horario de regreso, el vehículo tendría que quedarse esperando. Eso lo ofrecemos como medio día o día completo, con el vehículo a tu disposición.</div>' +
+      (pk.medioDia ? opt('Medio día', 4, pk.medioDia, pk.porPasajeroMedioDia) : '') + opt('Día completo', 8, pk.diaCompleto, pk.porPasajeroDiaCompleto) +
+      '<p class="pp2">Se cobra el vehículo completo, no por persona.</p>' + notas([]) + pie(v) + '</article>';
   }
   function htmlPaquete(r, v) {
     var rs = r.resumen || {};
