@@ -409,12 +409,12 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   function pie(v) { return '<p class="mail">Te enviamos una copia a ' + esc(v.mail) + '. Si no la ves, revisá la carpeta de spam.</p><button class="btn alt" type="button" id="otra" style="margin-top:14px">Hacer otra cotización</button>'; }
 
   function htmlTraslado(r, v) {
-    var rs = r.resumen || {}, full = r.servicio === 'dia_completo', dyb = r.servicio === 'ida_y_vuelta_dejar_y_buscar';
-    var serv = full ? 'Día completo (8 h)' : (dyb ? 'Te dejamos y volvemos a buscarlos a las ' + rs.regreso + ' h' : 'Solo ida');
+    var rs = r.resumen || {}, full = r.servicio === 'dia_completo', dyb = r.servicio === 'ida_y_vuelta_dejar_y_buscar', larga = r.servicio === 'larga_distancia', xh = r.extraH || 0;
+    var serv = larga ? 'Día completo (8 h)' + (xh ? ' + ' + xh + ' h extra' : '') + ' · vehículo a disposición hasta las ' + rs.regreso + ' h' : full ? 'Día completo (8 h)' : (dyb ? 'Te dejamos y volvemos a buscarlos a las ' + rs.regreso + ' h' : 'Solo ida');
     var wa = waLink(['Hola nativo! Soy ' + v.nombre + '. Quiero reservar ' + (full ? 'un día completo' : 'este viaje') + '.', 'Presupuesto ' + r.codigo + ' (válido hasta el ' + ddmm(r.vigenteHasta) + ').',
       'Salida: ' + rs.origen, 'Destino: ' + rs.destino, 'Fecha: ' + fechaLarga(rs.fecha) + ', ' + rs.salida + ' h' + (rs.regreso ? ', los buscamos a las ' + rs.regreso + ' h' : ''), 'Pasajeros: ' + rs.pax, 'Servicio: ' + serv,
       'Precio: ' + fmt(r.precio) + ' por el vehículo completo.']);
-    var extras = full ? ['Para este recorrido conviene el día completo: 8 horas netas desde que retiramos al grupo. Hora adicional: ' + fmt(r.horaExtra) + ', a abonar al finalizar el servicio.'] : (dyb ? ['Los dejamos en el destino y volvemos a buscarlos a la hora indicada: por eso no se cobra espera.'] : []);
+    var extras = larga ? ['Recorrido largo: el vehículo queda a tu disposición. Incluye 8 horas netas desde que retiramos al grupo' + (xh ? ' más ' + xh + ' hora' + (xh > 1 ? 's' : '') + ' adicional' + (xh > 1 ? 'es' : '') + ' de ' + fmt(r.horaExtra) + ' cada una, según el horario de regreso que indicaste' : '') + '. Si el horario cambia, la hora adicional es de ' + fmt(r.horaExtra) + ', a abonar al finalizar el servicio.'] : full ? ['Para este recorrido conviene el día completo: 8 horas netas desde que retiramos al grupo. Hora adicional: ' + fmt(r.horaExtra) + ', a abonar al finalizar el servicio.'] : (dyb ? ['Los dejamos en el destino y volvemos a buscarlos a la hora indicada: por eso no se cobra espera.'] : []);
     var op = '';
     if (r.paquetes) {
       var c = [];
