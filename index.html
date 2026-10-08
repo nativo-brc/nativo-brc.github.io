@@ -387,6 +387,11 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
     if (m === 'fuera_de_provincia') { avisoMalo('Por ahora operamos solo dentro de Río Negro.'); return; }
     if (m === 'mismo_lugar') { errCampo('destino', 'La salida y el destino son el mismo lugar.'); return; }
     if (m === 'regreso_antes_de_llegar') { errCampo('regreso', 'La hora de regreso tiene que ser posterior a la llegada al destino (alrededor de las ' + esc(r.llegaHHMM || '') + ').'); return; }
+    if (m === 'recorrido_fuera_de_limite') {
+      var tx = textoWaGenerico(v); tx[0] = 'Hola nativo! Quiero cotizar un viaje de larga distancia.';
+      if (v.regreso) tx.push('Regreso: ' + v.regreso + ' h');
+      avisoMalo('Este recorrido es largo y lo armamos a medida: lo cotizamos con kilómetros y horas reales. <a href="' + waLink(tx) + '" target="_blank" rel="noopener">Escribinos por WhatsApp</a> con estos datos y te respondemos enseguida.'); return;
+    }
     falloGeneral(v);
   }
 
