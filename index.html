@@ -2,16 +2,6 @@
 <html lang="es-AR">
 <head>
 <meta charset="utf-8">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18515236168"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-18515236168');
-</script>
-<script src="/ads.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Transfer privado en Bariloche · Minibús y van | Nativo</title>
 <meta name="description" content="Transfer y traslados privados en minibús (van) para hasta 17 pasajeros en Bariloche: aeropuerto BRC, Cerro Catedral, Llao Llao, Circuito Chico y El Bolsón. Cotizá online.">
@@ -216,7 +206,7 @@
   <details><summary>¿Hacen transfer del aeropuerto de Bariloche al hotel y de regreso?</summary><p>Sí. Hacemos el traslado desde el Aeropuerto de Bariloche (BRC) a tu alojamiento y también el regreso al aeropuerto. Cotizá cada tramo en el cotizador, con la fecha y la hora de tu vuelo.</p></details>
   <details><summary>¿Cuánto cuesta un transfer en Bariloche?</summary><p>Depende del recorrido, la fecha y la temporada. En el cotizador ves el precio final en pesos al instante, sin cargos adicionales.</p></details>
   <details><summary>¿Sirve para grupos, familias o equipos?</summary><p>Sí. Es una van de 17 pasajeros con portaequipaje en altura, ideal para grupos y familias numerosas.</p></details>
-  <details><summary>¿Cuántas personas entran?</summary><p>Hasta 17 pasajeros. Para más de 17 pasajeros, también lo coordinamos por WhatsApp.</p></details>
+  <details><summary>¿Cuántas personas entran?</summary><p>Hasta 17 pasajeros. Si viajan únicamente menores de 10 años, la capacidad es de 15, porque no pueden ocupar los 2 asientos de adelante, junto al conductor. Con adultos y niños se pueden ocupar los 17. Para más de 17 pasajeros, también lo coordinamos por WhatsApp.</p></details>
   <details><summary>¿El precio es por persona?</summary><p>No. Se cobra el vehículo completo. En el presupuesto te mostramos una referencia por pasajero, solo a modo informativo.</p></details>
   <details><summary>¿Qué incluye el precio?</summary><p>Es un precio final, sin cargos adicionales. No incluye entradas a parques, cerros ni atractivos.</p></details>
   <details><summary>¿Pueden volver a buscarnos?</summary><p>Sí. En un traslado, el vehículo no se queda esperando: los dejamos en el destino y volvemos a buscarlos a la hora que indiques, por eso no se cobra espera. Si necesitás el vehículo a disposición durante el día, está el medio día (4 horas) o el día completo (8 horas).</p></details>
@@ -423,7 +413,7 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   }
   function respuesta(r, v) {
     if (!r || typeof r !== 'object') { falloGeneral(v); return; }
-    if (r.ok === true) { mostrar(mode === 'transfer' ? (r.servicio === 'solo_paquetes' ? htmlSoloPaquetes(r, v) : htmlTraslado(r, v)) : htmlPaquete(r, v)); pedirMail(r.codigo); if (window.nativoConv) window.nativoConv('cotizacion'); return; }
+    if (r.ok === true) { mostrar(mode === 'transfer' ? (r.servicio === 'solo_paquetes' ? htmlSoloPaquetes(r, v) : htmlTraslado(r, v)) : htmlPaquete(r, v)); pedirMail(r.codigo); return; }
     var m = r.motivo;
     if (m === 'datos_invalidos') {
       var mapa = { nombre: 'nombre', mail: 'mail', whatsapp: 'whatsapp', fecha: 'fecha', salida: 'salida', regreso: 'regreso', pax: 'pax', lugar: mode === 'transfer' ? 'origen' : 'punto' };
@@ -450,7 +440,7 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   function notas(extra) {
     return '<ul class="notes">' + (extra || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') +
       '<li>Precio final, sin cargos adicionales.</li><li>No incluye entradas a parques, cerros ni atractivos.</li>' +
-      '<li>Capacidad máxima: ' + CONFIG.TOPE_PAX + ' pasajeros.</li></ul>';
+      '<li>Capacidad máxima: ' + CONFIG.TOPE_PAX + ' pasajeros. Si viajan únicamente menores de 10 años, ' + CONFIG.CAPACIDAD_MENORES + ' (no pueden ocupar los 2 asientos de adelante, junto al conductor). Con adultos y niños se ocupan los ' + CONFIG.TOPE_PAX + '.</li></ul>';
   }
   function botonWA(url) { return '<a class="btn" href="' + url + '" target="_blank" rel="noopener"><span>Reservar por WhatsApp</span><small>' + esc(CONFIG.WA_TXT) + '</small></a>'; }
   function pie(v) { return '<p class="mail">Te enviamos una copia a ' + esc(v.mail) + '. Si no la ves, revisá la carpeta de spam.</p><button class="btn alt" type="button" id="otra" style="margin-top:14px">Hacer otra cotización</button>'; }
