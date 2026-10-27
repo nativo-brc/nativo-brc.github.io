@@ -43,7 +43,8 @@
 <ul class="trust">
   <li>Habilitación provincial «Corredor de los Lagos»</li>
   <li>Lo maneja su dueño, con licencia de conducir profesional</li>
-  <li>Cancelación gratis con 48 hs de anticipación</li>
+  <li>Reserva con el 10%: te fija el precio</li>
+  <li>Cancelación con reembolso total hasta 7 días antes</li>
   <li>Precio final, sin cargos adicionales</li>
 </ul>
 
@@ -52,7 +53,7 @@
   <p class="intro">Cotizás en un minuto y reservás por WhatsApp.</p>
   <div class="grid3">
     <div class="panel"><span class="n">1</span><h3>Cotizás online</h3><p>Elegís salida, destino, fecha, hora y cantidad de pasajeros.</p></div>
-    <div class="panel"><span class="n">2</span><h3>Recibís el precio final</h3><p>Lo ves en pantalla y te llega por mail. Es válido por 7 días.</p></div>
+    <div class="panel"><span class="n">2</span><h3>Recibís el precio final</h3><p>Lo ves en pantalla y te llega por mail. Es válido por 1 mes contra reserva.</p></div>
     <div class="panel"><span class="n">3</span><h3>Reservás por WhatsApp</h3><p>Nos escribís con tu presupuesto y coordinamos los detalles.</p></div>
   </div>
 </section>
@@ -206,14 +207,14 @@
   <details><summary>¿Hacen transfer del aeropuerto de Bariloche al hotel y de regreso?</summary><p>Sí. Hacemos el traslado desde el Aeropuerto de Bariloche (BRC) a tu alojamiento y también el regreso al aeropuerto. Cotizá cada tramo en el cotizador, con la fecha y la hora de tu vuelo.</p></details>
   <details><summary>¿Cuánto cuesta un transfer en Bariloche?</summary><p>Depende del recorrido, la fecha y la temporada. En el cotizador ves el precio final en pesos al instante, sin cargos adicionales.</p></details>
   <details><summary>¿Sirve para grupos, familias o equipos?</summary><p>Sí. Es una van de 17 pasajeros con portaequipaje en altura, ideal para grupos y familias numerosas.</p></details>
-  <details><summary>¿Cuántas personas entran?</summary><p>Hasta 17 pasajeros. Si viajan únicamente menores de 10 años, la capacidad es de 15, porque no pueden ocupar los 2 asientos de adelante, junto al conductor. Con adultos y niños se pueden ocupar los 17. Para más de 17 pasajeros, también lo coordinamos por WhatsApp.</p></details>
+  <details><summary>¿Cuántas personas entran?</summary><p>Hasta 17 pasajeros. Para más de 17 pasajeros, también lo coordinamos por WhatsApp.</p></details>
   <details><summary>¿El precio es por persona?</summary><p>No. Se cobra el vehículo completo. En el presupuesto te mostramos una referencia por pasajero, solo a modo informativo.</p></details>
   <details><summary>¿Qué incluye el precio?</summary><p>Es un precio final, sin cargos adicionales. No incluye entradas a parques, cerros ni atractivos.</p></details>
   <details><summary>¿Pueden volver a buscarnos?</summary><p>Sí. En un traslado, el vehículo no se queda esperando: los dejamos en el destino y volvemos a buscarlos a la hora que indiques, por eso no se cobra espera. Si necesitás el vehículo a disposición durante el día, está el medio día (4 horas) o el día completo (8 horas).</p></details>
-  <details><summary>¿Cuánto dura el presupuesto?</summary><p>7 días desde que lo pedís. Después puede cambiar, por ejemplo por el precio del combustible o la temporada.</p></details>
-  <details><summary>¿Se puede cancelar?</summary><p>Sí, gratis con 48 horas de anticipación.</p></details>
+  <details><summary>¿Cuánto dura el presupuesto?</summary><p>1 mes contra reserva. Pasado ese plazo se ajusta según posibles aumentos del gasoil.</p></details>
+  <details><summary>¿Se puede cancelar?</summary><p>Sí. Con al menos 7 días de anticipación se reembolsa el 100% de la reserva. Pasado ese plazo, la reserva no se reembolsa.</p></details>
   <details><summary>¿Hacen viajes fuera de Río Negro?</summary><p>Por ahora, no: solo dentro de Río Negro.</p></details>
-  <details><summary>¿Cómo reservo?</summary><p>Pedí tu presupuesto en el cotizador y escribinos por WhatsApp con ese presupuesto. Te confirmamos disponibilidad y coordinamos los detalles.</p></details>
+  <details><summary>¿Cómo reservo?</summary><p>Pedí tu presupuesto en el cotizador y escribinos por WhatsApp con ese presupuesto. Te confirmamos disponibilidad y coordinamos los detalles. La reserva se hace con el 10% del valor del viaje, y con ese pago se fija el precio. Se paga en efectivo o por transferencia bancaria.</p></details>
 </section>
 </main>
 <footer class="sitefoot">
@@ -229,7 +230,7 @@ var CONFIG = {
   MAPS_KEY: 'AIzaSyD3bjxa2CFyrta0m8dWY53VzJMUvtm3cFY',   // clave del navegador: restringida a este sitio y a 2 APIs
   URL_SCRIPT: 'https://script.google.com/macros/s/AKfycbyDZlOhjlvYRdF0YJgmgVH6lu9_uUIsmDs7sYeFPadMv8mLWcWH31AagNkreEDE953f/exec',                            // dirección /exec de la aplicación web de Apps Script
   WA: '5492944783005', WA_TXT: '+54 9 294 478-3005',
-  TOPE_PAX: 17, CAPACIDAD_MENORES: 15,                     // solo para los avisos de la pantalla; el servidor controla de verdad
+  TOPE_PAX: 17,                     // solo para los avisos de la pantalla; el servidor controla de verdad
   // Opciones con las que arranca el formulario (se pueden cambiar acá):
   PAX_POR_DEFECTO: 17, HORA_POR_DEFECTO: '09:00',
   SALIDA_POR_DEFECTO: ''                         // parte del nombre de un botón de DESTINOS que se preselecciona como salida; vacío = no preselecciona nada
@@ -439,8 +440,8 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   function ppTexto(pax, pp) { return '<p class="pp">Referencia por pasajero (' + esc(pax) + ' ' + (pax === 1 ? 'persona' : 'personas') + '): <strong>' + fmt(pp) + '</strong></p><p class="pp2">Se cobra el vehículo completo, no por persona.</p>'; }
   function notas(extra) {
     return '<ul class="notes">' + (extra || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') +
-      '<li>Precio final, sin cargos adicionales.</li><li>No incluye entradas a parques, cerros ni atractivos.</li>' +
-      '<li>Capacidad máxima: ' + CONFIG.TOPE_PAX + ' pasajeros. Si viajan únicamente menores de 10 años, ' + CONFIG.CAPACIDAD_MENORES + ' (no pueden ocupar los 2 asientos de adelante, junto al conductor). Con adultos y niños se ocupan los ' + CONFIG.TOPE_PAX + '.</li></ul>';
+      '<li>Precio final, sin cargos adicionales.</li><li>No incluye entradas a parques, cerros ni atractivos.</li><li>Presupuesto válido por 1 mes contra reserva; pasado ese plazo se ajusta según posibles aumentos del gasoil.</li><li>Reserva con el 10% del valor del viaje: con ese pago se fija el precio. Pago en efectivo o transferencia bancaria.</li><li>Cancelación con al menos 7 días de anticipación: se reembolsa el 100% de la reserva. Pasado ese plazo, no se reembolsa.</li>' +
+      '<li>Capacidad máxima: ' + CONFIG.TOPE_PAX + ' pasajeros.</li></ul>';
   }
   function botonWA(url) { return '<a class="btn" href="' + url + '" target="_blank" rel="noopener"><span>Reservar por WhatsApp</span><small>' + esc(CONFIG.WA_TXT) + '</small></a>'; }
   function pie(v) { return '<p class="mail">Te enviamos una copia a ' + esc(v.mail) + '. Si no la ves, revisá la carpeta de spam.</p><button class="btn alt" type="button" id="otra" style="margin-top:14px">Hacer otra cotización</button>'; }
