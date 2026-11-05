@@ -45,7 +45,7 @@
   <li>Lo maneja su dueño, con licencia de conducir profesional</li>
   <li>Reserva con el 10%: te fija el precio</li>
   <li>Cancelación con reembolso total hasta 7 días antes</li>
-  <li>Precio final, sin cargos adicionales</li>
+  <li>Precio por el minibús completo, no por persona</li>
 </ul>
 
 <section class="sec" id="como">
@@ -60,7 +60,8 @@
 </div>
 
 <section class="cot" id="cotizar">
-  <div class="cot-head"><h2>Cotizá tu traslado</h2><p class="lead" style="margin:0 auto">Precio final en pesos, al instante. Hasta 17 pasajeros, dentro de Río Negro.</p></div>
+  <div class="cot-head"><h2>Cotizá tu traslado</h2><p class="lead" style="margin:0 auto">Precio final en pesos, al instante. Hasta 17 pasajeros, dentro de Río Negro.</p>
+    <p style="text-align:center;margin:12px auto 0;max-width:460px;font-size:12.5px;line-height:1.45;color:var(--on-bg2)">* Es un minibús privado completo: el precio es por el vehículo, no por persona (el mismo si viajan 2 o 17). Si son pocas personas, tené en cuenta que está pensado para grupos y familias.</p></div>
   <div class="wrap c">
   <div class="tabs" role="tablist" aria-label="Tipo de servicio">
     <button class="tab" role="tab" id="tabT" aria-selected="true" data-mode="transfer">Traslado</button>
@@ -119,7 +120,7 @@
           <input type="number" id="pax" min="1" max="40" value="17" inputmode="numeric" aria-label="Cantidad de pasajeros">
           <button type="button" id="mas" aria-label="Más pasajeros">+</button>
         </div>
-        <span class="hint">Capacidad máxima: 17 personas.</span>
+        <span class="hint">El precio es por el minibús completo: es el mismo si viajan 2 o 17 personas. Capacidad máxima: 17.</span>
         <span class="err" data-err="pax"></span>
       </div>
       <div id="paxNotice" class="notice" hidden></div>
@@ -207,8 +208,9 @@
   <details><summary>¿Hacen transfer del aeropuerto de Bariloche al hotel y de regreso?</summary><p>Sí. Hacemos el traslado desde el Aeropuerto de Bariloche (BRC) a tu alojamiento y también el regreso al aeropuerto. Cotizá cada tramo en el cotizador, con la fecha y la hora de tu vuelo.</p></details>
   <details><summary>¿Cuánto cuesta un transfer en Bariloche?</summary><p>Depende del recorrido, la fecha y la temporada. En el cotizador ves el precio final en pesos al instante, sin cargos adicionales.</p></details>
   <details><summary>¿Sirve para grupos, familias o equipos?</summary><p>Sí. Es una van de 17 pasajeros con portaequipaje en altura, ideal para grupos y familias numerosas.</p></details>
+  <details open><summary>¿El precio es por persona?</summary><p>No. Es un minibús privado y se cobra el vehículo completo, hasta 17 pasajeros: el precio es el mismo si viajan 2 o 17 personas. En el presupuesto te mostramos una referencia por pasajero, solo a modo informativo.</p></details>
   <details><summary>¿Cuántas personas entran?</summary><p>Hasta 17 pasajeros. Para más de 17 pasajeros, también lo coordinamos por WhatsApp.</p></details>
-  <details><summary>¿El precio es por persona?</summary><p>No. Se cobra el vehículo completo. En el presupuesto te mostramos una referencia por pasajero, solo a modo informativo.</p></details>
+  
   <details><summary>¿Qué incluye el precio?</summary><p>Es un precio final, sin cargos adicionales. No incluye entradas a parques, cerros ni atractivos.</p></details>
   <details><summary>¿Pueden volver a buscarnos?</summary><p>Sí. En un traslado, el vehículo no se queda esperando: los dejamos en el destino y volvemos a buscarlos a la hora que indiques, por eso no se cobra espera. Si necesitás el vehículo a disposición durante el día, está el medio día (4 horas) o el día completo (8 horas).</p></details>
   <details><summary>¿Cuánto dura el presupuesto?</summary><p>1 mes contra reserva. Pasado ese plazo se ajusta según posibles aumentos del gasoil.</p></details>
@@ -281,10 +283,15 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   function paxCheck() {
     var n = parseInt($('#pax').value, 10), box = $('#paxNotice');
     if (n > CONFIG.TOPE_PAX) {
-      box.hidden = false;
+      box.hidden = false; box.style.cssText = '';
       box.innerHTML = 'Para más de ' + CONFIG.TOPE_PAX + ' pasajeros lo coordinamos por WhatsApp con un compañero. <a href="' + waLink(['Hola nativo! Somos ' + n + ' pasajeros y necesitamos cotizar un traslado.']) + '" target="_blank" rel="noopener">Escribinos</a>.';
       $('#go').disabled = true;
-    } else { box.hidden = true; $('#go').disabled = enviando; }
+    } else if (n >= 1 && n <= 3) {
+      box.hidden = false;
+      box.style.cssText = 'background:none;padding:0;margin:-6px 0 14px;font-size:13px;color:var(--ink2)';
+      box.innerHTML = 'Es un minibús privado completo (17 plazas), pensado para grupos: el precio es el mismo para 2 que para 17 pasajeros.';
+      $('#go').disabled = enviando;
+    } else { box.hidden = true; box.style.cssText = ''; $('#go').disabled = enviando; }
   }
   $('#menos').onclick = function () { $('#pax').value = Math.max(1, (parseInt($('#pax').value, 10) || 1) - 1); paxCheck(); };
   $('#mas').onclick = function () { $('#pax').value = (parseInt($('#pax').value, 10) || 0) + 1; paxCheck(); };
