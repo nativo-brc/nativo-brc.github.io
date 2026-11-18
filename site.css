@@ -149,3 +149,9 @@ a.panel:hover{outline:3px solid var(--on-bg);outline-offset:2px}
 .sitefoot h3{margin:0 0 6px;font-size:14px;color:var(--on-bg);letter-spacing:.04em;text-transform:uppercase}
 .sitefoot p{margin:0 0 4px}
 .wrap.c{padding-top:0}
+.aviso-bg{position:fixed;inset:0;background:rgba(15,30,20,.62);display:flex;align-items:center;justify-content:center;padding:18px;z-index:1000}
+.aviso-bg[hidden]{display:none}
+.aviso{background:var(--card);color:var(--ink);border-radius:24px;padding:26px 22px 20px;max-width:420px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.aviso h2{font-size:20px;line-height:1.25;margin:0 0 10px}
+.aviso p{font-size:15px;margin:0 0 10px}
+.aviso .btn{margin-top:8px}

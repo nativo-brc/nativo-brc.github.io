@@ -226,13 +226,23 @@
 </footer>
 </div>
 
+<div id="avisoPax" class="aviso-bg" hidden>
+  <div class="aviso" role="dialog" aria-modal="true" aria-labelledby="avisoTit">
+    <h2 id="avisoTit">Ojo: el precio es por el minibús completo</h2>
+    <p>Nativo es un servicio <strong>privado</strong>: el minibús (17 plazas) es solo para tu grupo. El precio es el <strong>mismo si viajan 2 o 17 personas</strong>, no se paga por persona.</p>
+    <p>Está pensado para grupos. Si son pocos, probablemente te convenga otra opción; si igual querés el traslado privado, cotizalo.</p>
+    <button type="button" class="btn" id="avisoOk">Entendido, cotizar igual</button>
+    <button type="button" class="btn alt" id="avisoNo">Cambiar pasajeros</button>
+  </div>
+</div>
 <script>
 /* ============ CONFIGURACIÓN (valores públicos; nada secreto) ============ */
 var CONFIG = {
   MAPS_KEY: 'AIzaSyD3bjxa2CFyrta0m8dWY53VzJMUvtm3cFY',   // clave del navegador: restringida a este sitio y a 2 APIs
   URL_SCRIPT: 'https://script.google.com/macros/s/AKfycbyDZlOhjlvYRdF0YJgmgVH6lu9_uUIsmDs7sYeFPadMv8mLWcWH31AagNkreEDE953f/exec',                            // dirección /exec de la aplicación web de Apps Script
   WA: '5492944783005', WA_TXT: '+54 9 294 478-3005',
-  TOPE_PAX: 17,                     // solo para los avisos de la pantalla; el servidor controla de verdad
+  TOPE_PAX: 17, PAX_AVISO: 8,   // menos de PAX_AVISO pasajeros: pop-up aclarando que es un minibús privado completo
+                      // solo para los avisos de la pantalla; el servidor controla de verdad
   // Opciones con las que arranca el formulario (se pueden cambiar acá):
   PAX_POR_DEFECTO: 17, HORA_POR_DEFECTO: '09:00',
   SALIDA_POR_DEFECTO: ''                         // parte del nombre de un botón de DESTINOS que se preselecciona como salida; vacío = no preselecciona nada
@@ -286,11 +296,6 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
       box.hidden = false; box.style.cssText = '';
       box.innerHTML = 'Para más de ' + CONFIG.TOPE_PAX + ' pasajeros lo coordinamos por WhatsApp con un compañero. <a href="' + waLink(['Hola nativo! Somos ' + n + ' pasajeros y necesitamos cotizar un traslado.']) + '" target="_blank" rel="noopener">Escribinos</a>.';
       $('#go').disabled = true;
-    } else if (n >= 1 && n <= 3) {
-      box.hidden = false;
-      box.style.cssText = 'background:none;padding:0;margin:-6px 0 14px;font-size:13px;color:var(--ink2)';
-      box.innerHTML = 'Es un minibús privado completo (17 plazas), pensado para grupos: el precio es el mismo para 2 que para 17 pasajeros.';
-      $('#go').disabled = enviando;
     } else { box.hidden = true; box.style.cssText = ''; $('#go').disabled = enviando; }
   }
   $('#menos').onclick = function () { $('#pax').value = Math.max(1, (parseInt($('#pax').value, 10) || 1) - 1); paxCheck(); };
@@ -405,10 +410,30 @@ var LOGO_GREEN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAYAAADN
   }
   function bloquear(b) { enviando = b; $('#go').disabled = b; $('#go').firstChild.textContent = b ? 'Calculando…' : 'Ver mi presupuesto'; }
 
+
+  /* ---------- aviso para pocos pasajeros ---------- */
+  var paxConfirmado = null, avisoPrev = null;
+  function abrirAviso() {
+    avisoPrev = document.activeElement; $('#avisoPax').hidden = false; $('#avisoOk').focus();
+  }
+  function cerrarAviso() { $('#avisoPax').hidden = true; if (avisoPrev && avisoPrev.focus) avisoPrev.focus(); }
+  $('#avisoOk').onclick = function () {
+    paxConfirmado = parseInt($('#pax').value, 10); cerrarAviso();
+    $('#f').dispatchEvent(new Event('submit', { cancelable: true }));
+  };
+  $('#avisoNo').onclick = function () { cerrarAviso(); $('#pax').focus(); $('#pax').select(); };
+  $('#avisoPax').addEventListener('click', function (e) { if (e.target === this) cerrarAviso(); });
+  document.addEventListener('keydown', function (e) {
+    var m = $('#avisoPax'); if (m.hidden) return;
+    if (e.key === 'Escape') cerrarAviso();
+    if (e.key === 'Tab') { var b = [$('#avisoOk'), $('#avisoNo')], i = b.indexOf(document.activeElement); e.preventDefault(); b[(i + (e.shiftKey ? -1 : 1) + 2) % 2].focus(); }
+  });
+
   $('#f').addEventListener('submit', function (e) {
     e.preventDefault(); if (enviando) return; limpiarErrores();
     if (!CONFIG.URL_SCRIPT || CONFIG.URL_SCRIPT.indexOf('http') !== 0) { avisoMalo('El cotizador todavía no está conectado. <a href="' + waLink(['Hola nativo! Quiero cotizar un viaje.']) + '" target="_blank" rel="noopener">Escribinos por WhatsApp</a>.'); return; }
     var v = leerForm(); if (!validarLocal(v)) { var p = document.querySelector('.err:not(:empty)'); if (p) p.scrollIntoView({ block: 'center' }); return; }
+    if (v.pax < CONFIG.PAX_AVISO && paxConfirmado !== v.pax) { abrirAviso(); return; }
     var payload = { accion: mode === 'transfer' ? 'traslado' : 'paquete', fecha: v.fecha, salida: v.salida, pax: v.pax, nombre: v.nombre, mail: v.mail, whatsapp: v.whatsapp, c1: v.c1, c2: v.c2, web: v.web };
     if (mode === 'transfer') { payload.origen = sel.origen; payload.destino = sel.destino; payload.regreso = v.regreso; } else payload.punto = sel.punto;
     bloquear(true);
